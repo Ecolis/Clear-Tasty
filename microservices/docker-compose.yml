@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Микросервис 1: Статистика рецептов
+  recipe-stats:
+    build:
+      context: ./recipe-stats-service
+      dockerfile: Dockerfile
+    container_name: recipe-stats-service
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - cooking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Микросервис 2: Погода и сезонные рекомендации
+  weather-service:
+    build:
+      context: ./weather-service
+      dockerfile: Dockerfile
+    container_name: weather-service
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - cooking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Nginx для балансировки (опционально)
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: microservices-proxy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - recipe-stats
+      - weather-service
+    networks:
+      - cooking-network
+    restart: unless-stopped
+
+# Создаем сеть для общения между сервисами
+networks:
+  cooking-network:
+    driver: bridge
