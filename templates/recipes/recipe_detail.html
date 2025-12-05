@@ -1,0 +1,156 @@
+<!-- templates/recipes/recipe_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ recipe.title }} - Кулинарный сайт{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+                <li class="breadcrumb-item active">{{ recipe.title }}</li>
+            </ol>
+        </nav>
+        
+        <h1>{{ recipe.title }}</h1>
+        <p class="text-muted">
+            Автор: {{ recipe.author.username }} | 
+            Добавлено: {{ recipe.created_at|date:"d.m.Y" }} | 
+            Просмотров: {{ recipe.views }}
+        </p>
+        
+        {% if recipe.image %}
+            <img src="{{ recipe.image.url }}" class="img-fluid rounded mb-4" alt="{{ recipe.title }}">
+        {% endif %}
+        
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">📝 Описание</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ recipe.description }}</p>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6>⏱ Время</h6>
+                        <p class="mb-0">{{ recipe.cooking_time }} мин</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6>⚡ Сложность</h6>
+                        <p class="mb-0">{{ recipe.get_difficulty_display }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6>🍽 Категория</h6>
+                        <p class="mb-0">{{ recipe.category.name }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6>👤 Автор</h6>
+                        <p class="mb-0">{{ recipe.author.username }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">🛒 Ингредиенты</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            {% for ingredient in ingredients_list %}
+                                {% if ingredient.strip %}
+                                    <li class="mb-2">• {{ ingredient.strip }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">👨‍🍳 Шаги приготовления</h5>
+                    </div>
+                    <div class="card-body">
+                        <ol>
+                            {% for step in steps_list %}
+                                {% if step.strip %}
+                                    <li class="mb-3">{{ step.strip }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if user == recipe.author %}
+            <div class="d-flex gap-2 mt-4">
+                <a href="#" class="btn btn-warning">Редактировать</a>
+                <a href="#" class="btn btn-danger">Удалить</a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="sticky-top" style="top: 20px;">
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">📊 Информация</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Время приготовления:</strong> {{ recipe.cooking_time }} минут</p>
+                    <p><strong>Сложность:</strong> {{ recipe.get_difficulty_display }}</p>
+                    <p><strong>Категория:</strong> {{ recipe.category.name }}</p>
+                    <p><strong>Дата добавления:</strong> {{ recipe.created_at|date:"d.m.Y H:i" }}</p>
+                    <p><strong>Последнее обновление:</strong> {{ recipe.updated_at|date:"d.m.Y H:i" }}</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">👤 Об авторе</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 50px; height: 50px; font-size: 1.5rem;">
+                            {{ recipe.author.username|first|upper }}
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-0">{{ recipe.author.username }}</h6>
+                            <small class="text-muted">Автор рецепта</small>
+                        </div>
+                    </div>
+                    <p class="mb-0">
+                        <a href="{% url 'search' %}?query={{ recipe.author.username }}" 
+                           class="btn btn-outline-primary btn-sm">
+                            Все рецепты автора
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+<!-- templates/recipes/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Главная - Кулинарный сайт{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Последние рецепты</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <div class="btn-group">
+            <a href="?sort=newest" class="btn btn-outline-secondary {% if sort_by == 'newest' %}active{% endif %}">
+                Новые
+            </a>
+            <a href="?sort=popular" class="btn btn-outline-secondary {% if sort_by == 'popular' %}active{% endif %}">
+                Популярные
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for recipe in page_obj %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if recipe.image %}
+                <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <span class="text-white">Нет изображения</span>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ recipe.title }}</h5>
+                <p class="card-text text-muted">{{ recipe.description|truncatechars:100 }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        👤 {{ recipe.author.username }} | 
+                        ⏱ {{ recipe.cooking_time }} мин | 
+                        👁 {{ recipe.views }}
+                    </small>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-primary btn-sm">Смотреть рецепт</a>
+                {% if recipe.category %}
+                    <span class="badge bg-secondary float-end">{{ recipe.category.name }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            Рецептов пока нет. <a href="{% url 'add_recipe' %}">Добавьте первый рецепт!</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1&sort={{ sort_by }}">Первая</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}">Назад</a>
+            </li>
+        {% endif %}
+        
+        <li class="page-item active">
+            <span class="page-link">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}">Вперед</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}">Последняя</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<div class="mt-5">
+    <h4>Категории</h4>
+    <div class="d-flex flex-wrap gap-2">
+        {% for category in categories %}
+            <a href="{% url 'search' %}?category={{ category.id }}" class="btn btn-outline-primary btn-sm">
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

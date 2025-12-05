@@ -1,0 +1,85 @@
+<!-- templates/recipes/register.html -->
+{% extends 'base.html' %}
+
+{% block title %}Регистрация - Кулинарный сайт{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">👤 Регистрация</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        {{ form.username.label_tag }}
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="alert alert-danger mt-1">
+                                {{ form.username.errors }}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Только буквы, цифры и @/./+/-/_
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="alert alert-danger mt-1">
+                                {{ form.email.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.password1.label_tag }}
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="alert alert-danger mt-1">
+                                {{ form.password1.errors }}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Пароль должен содержать минимум 8 символов
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.password2.label_tag }}
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="alert alert-danger mt-1">
+                                {{ form.password2.errors }}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Подтвердите пароль
+                        </small>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            Зарегистрироваться
+                        </button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="mb-2">Уже есть аккаунт?</p>
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                        Войти в систему
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

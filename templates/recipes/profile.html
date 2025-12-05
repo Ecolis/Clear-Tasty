@@ -1,0 +1,100 @@
+<!-- templates/recipes/profile.html -->
+{% extends 'base.html' %}
+
+{% block title %}Профиль - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                     style="width: 100px; height: 100px; font-size: 2.5rem;">
+                    {{ user.username|first|upper }}
+                </div>
+                <h4>{{ user.username }}</h4>
+                <p class="text-muted">{{ user.email }}</p>
+                <p class="mb-0">
+                    <span class="badge bg-info">{{ recipe_count }} рецептов</span>
+                </p>
+            </div>
+            <div class="card-footer">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'add_recipe' %}" class="btn btn-success">
+                        + Добавить рецепт
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary">
+                        Настройки профиля
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">📋 Мои рецепты ({{ recipe_count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if user_recipes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Категория</th>
+                                    <th>Время</th>
+                                    <th>Просмотры</th>
+                                    <th>Дата</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for recipe in user_recipes %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'recipe_detail' recipe.id %}" class="text-decoration-none">
+                                            {{ recipe.title }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if recipe.category %}
+                                            <span class="badge bg-secondary">{{ recipe.category.name }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ recipe.cooking_time }} мин</td>
+                                    <td>{{ recipe.views }}</td>
+                                    <td>{{ recipe.created_at|date:"d.m.Y" }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-outline-primary">
+                                                Просмотр
+                                            </a>
+                                            <a href="#" class="btn btn-outline-warning">
+                                                Редакт.
+                                            </a>
+                                            <a href="#" class="btn btn-outline-danger">
+                                                Удалить
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <h5 class="text-muted">У вас пока нет рецептов</h5>
+                        <p class="mb-3">Создайте свой первый рецепт!</p>
+                        <a href="{% url 'add_recipe' %}" class="btn btn-success btn-lg">
+                            + Добавить первый рецепт
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
