@@ -101,3 +101,18 @@ Thumbs.db
 # Временные файлы
 tmp/
 temp/
+
+# Docker файлы окружения
+docker-compose.override.yml
+docker-compose.prod.yml
+
+# Docker volumes
+**/data/
+**/volumes/
+
+# Логи приложений
+**/*.log
+
+# Временные файлы микросервисов
+**/tmp/
+**/temp/
